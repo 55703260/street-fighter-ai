@@ -1,15 +1,3 @@
-# Copyright 2023 LIN Yi. All Rights Reserved.
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#     http://www.apache.org/licenses/LICENSE-2.0
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-
 import os
 import time 
 
@@ -21,7 +9,7 @@ from street_fighter_custom_wrapper import StreetFighterCustomWrapper
 RESET_ROUND = True  # Whether to reset the round when fight is over. 
 RENDERING = True    # Whether to render the game screen.
 
-MODEL_NAME = r"ppo_ryu_2500000_steps_updated" # Specify the model file to load. Model "ppo_ryu_2500000_steps_updated" is capable of beating the final stage (Bison) of the game.
+MODEL_NAME = r"ppo_ryu_500000_steps_level1_gpu_batch1024" # Specify the model file to load. Model "ppo_ryu_2500000_steps_updated" is capable of beating the final stage (Bison) of the game.
 
 # Model notes:
 # ppo_ryu_2000000_steps_updated: Just beginning to overfit state, generalizable but not quite capable.
@@ -46,7 +34,8 @@ def make_env(game, state):
     return _init
 
 game = "StreetFighterIISpecialChampionEdition-Genesis"
-env = make_env(game, state="Champion.Level12.RyuVsBison")()
+env = make_env(game, state="Champion.Level1.RyuVsGuile")()
+# env = make_env(game, state="Champion.Level12.RyuVsBison")()
 # model = PPO("CnnPolicy", env)
 
 if not RANDOM_ACTION:
@@ -77,7 +66,6 @@ for _ in range(num_episodes):
         else:
             action, _states = model.predict(obs)
             obs, reward, done, info = env.step(action)
-
         if reward != 0:
             total_reward += reward
             print("Reward: {:.3f}, playerHP: {}, enemyHP:{}".format(reward, info['agent_hp'], info['enemy_hp']))

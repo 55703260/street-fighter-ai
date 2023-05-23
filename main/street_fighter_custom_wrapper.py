@@ -1,15 +1,3 @@
-# Copyright 2023 LIN Yi. All Rights Reserved.
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#     http://www.apache.org/licenses/LICENSE-2.0
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-
 import math
 import time
 import collections
@@ -56,7 +44,7 @@ class StreetFighterCustomWrapper(gym.Wrapper):
         # Clear the frame stack and add the first observation [num_frames] times
         self.frame_stack.clear()
         for _ in range(self.num_frames):
-            self.frame_stack.append(observation[::2, ::2, :])
+            self.frame_stack.append(observation[::2, ::2, :]) #沿着第一维度和第二维度每隔一个元素取一个元素，而在第三维度取所有的元素,相当于对图像进行了降采样，使其宽度和高度都缩小了一半
 
         return np.stack([self.frame_stack[i * 3 + 2][:, :, i] for i in range(3)], axis=-1)
 
@@ -69,7 +57,7 @@ class StreetFighterCustomWrapper(gym.Wrapper):
         # Render the game if rendering flag is set to True.
         if self.rendering:
             self.env.render()
-            time.sleep(0.01)
+            time.sleep(0.01)  #游戏减速
 
         for _ in range(self.num_step_frames - 1):
             
@@ -78,7 +66,7 @@ class StreetFighterCustomWrapper(gym.Wrapper):
             self.frame_stack.append(obs[::2, ::2, :])
             if self.rendering:
                 self.env.render()
-                time.sleep(0.01)
+                time.sleep(0.01) #游戏减速
 
         curr_player_health = info['agent_hp']
         curr_oppont_health = info['enemy_hp']
