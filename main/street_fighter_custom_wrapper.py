@@ -30,6 +30,13 @@ class StreetFighterCustomWrapper(gym.Wrapper):
         self.reset_round = reset_round
         self.rendering = rendering
     
+    # 这个函数 _stack_observation 的目的是将多帧的游戏画面叠加起来形成一个更复杂的观察值。首先，我们看 self.frame_stack[i * 3 + 2][:, :, i] 这部分。
+    # 这里，self.frame_stack 是一个包含了之前几帧游戏画面的队列。i * 3 + 2 是索引，由于 i 在 range(3) 中，所以 i * 3 + 2 的取值会是 2, 5, 8。
+    # 因此，这段代码会取出 self.frame_stack 中索引为 2, 5, 8 的三帧画面。每一帧画面是一个三维的张量，其中第三个维度是颜色通道（RGB）。
+    # 接下来，[:, :, i] 这部分，会从每一帧画面中取出第 i 个颜色通道的值。由于 i 在 range(3) 中，所以 i 的取值会是 0, 1, 2，分别对应 RGB 中的 R、G、B 三个颜色通道。
+    # 最后，np.stack([self.frame_stack[i * 3 + 2][:, :, i] for i in range(3)], axis=-1) 这部分，会将取出的三个颜色通道的值沿着第三个维度（颜色通道维度）堆叠起来。
+    # 换句话说，这段代码会从索引为 2, 5, 8 的三帧画面中，分别取出 R、G、B 三个颜色通道的值，然后将这三个颜色通道的值组合成一个新的画面。
+    # 这样，每次调用 _stack_observation 函数，都会返回一个包含了三帧画面信息的新画面。这种方法有助于模型学习游戏中的动态信息，比如角色的移动方向、速度等等。
     def _stack_observation(self):
         return np.stack([self.frame_stack[i * 3 + 2][:, :, i] for i in range(3)], axis=-1)
 
